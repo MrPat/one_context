@@ -6,6 +6,10 @@ import 'package:one_context/src/controllers/overlay_controller.mixin.dart';
 
 import '../../one_context.dart';
 
+// Allows user to wrap each route's widget with something without needing to
+// access any of the underlying classes
+typedef ChildWrapper = Widget Function({required Widget child});
+
 class OneContext with NavigatorController, OverlayController, DialogController {
   static BuildContext? _context;
 
@@ -69,18 +73,20 @@ class OneContext with NavigatorController, OverlayController, DialogController {
   ///      ...
   /// ```
   Widget builder(
-    BuildContext context,
-    Widget? widget, {
-    Key? key,
-    MediaQueryData? mediaQueryData,
-    String? initialRoute,
-    List<NavigatorObserver> observers = const <NavigatorObserver>[],
-  }) =>
+      BuildContext context,
+      Widget? widget, {
+        Key? key,
+        MediaQueryData? mediaQueryData,
+        String? initialRoute,
+        List<NavigatorObserver> observers = const <NavigatorObserver>[],
+       ChildWrapper? childWrapper
+      }) =>
       OneContextWidget(
         child: widget,
         mediaQueryData: mediaQueryData,
         initialRoute: initialRoute,
         observers: observers,
+        childWrapper: childWrapper,
       );
 }
 

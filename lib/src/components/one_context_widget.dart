@@ -7,6 +7,7 @@ class OneContextWidget extends StatefulWidget {
   final MediaQueryData? mediaQueryData;
   final String? initialRoute;
   final List<NavigatorObserver> observers;
+  final ChildWrapper? childWrapper;
 
   OneContextWidget({
     Key? key,
@@ -14,6 +15,7 @@ class OneContextWidget extends StatefulWidget {
     this.mediaQueryData,
     this.initialRoute,
     this.observers = const <NavigatorObserver>[],
+    this.childWrapper
   }) : super(key: key);
   _OneContextWidgetState createState() => _OneContextWidgetState();
 }
@@ -39,17 +41,22 @@ class _OneContextWidgetState extends State<OneContextWidget> {
     return false;
   }
 
+  Widget _defaultChildWrapper({required Widget child}) => child;
+
   @override
   Widget build(BuildContext context) {
+    final ChildWrapper childWrapper = widget.childWrapper ?? _defaultChildWrapper;
+
     return Navigator(
       initialRoute: widget.initialRoute ?? '/',
       observers: [...widget.observers, OneContext().heroController],
       onGenerateRoute: (_) => MaterialPageRoute(
-          builder: (context) => Scaffold(
+          builder: (context) => childWrapper(
+              child: Scaffold(
                 resizeToAvoidBottomInset: false,
                 key: OneContext().scaffoldKey,
                 body: widget.child!,
-              )),
+              ))),
     );
   }
 }
